@@ -1,7 +1,8 @@
+import path from "path";
 import { logger } from "../../shared/logger";
-import { doGnomes, GnomeProcessor } from "./read-gnomes";
+import { doLines, LineProcessor } from "../../shared/read-file";
 
-const processGnome: GnomeProcessor<number> = function () {
+const processGnome: LineProcessor<number> = function () {
   let currentGnomeTotal = 0;
   let greatestGnomeTotal = 0;
 
@@ -27,7 +28,10 @@ const processGnome: GnomeProcessor<number> = function () {
 };
 
 (async function doIt() {
-  const answer = await doGnomes(processGnome);
+  const answer = await doLines(
+    processGnome,
+    path.join(__dirname, "gnomes.txt")
+  );
 
   logger(
     `****\nReading file line by line with readline done.\n****\nThe highest gnome number is ${answer}`

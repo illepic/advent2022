@@ -1,7 +1,8 @@
+import path from "path";
 import { logger } from "../../shared/logger";
-import { doGnomes, GnomeProcessor } from "./read-gnomes";
+import { doLines, LineProcessor } from "../../shared/read-file";
 
-const processGnome: GnomeProcessor<number[]> = function () {
+const processGnome: LineProcessor<number[]> = function () {
   let currentGnomeTotal = 0;
   const top3Gnomes = [0, 0, 0];
 
@@ -37,7 +38,10 @@ const processGnome: GnomeProcessor<number[]> = function () {
 };
 
 (async function doIt() {
-  const answer = await doGnomes(processGnome);
+  const answer = await doLines(
+    processGnome,
+    path.join(__dirname, "gnomes.txt")
+  );
 
   // Sum of top 3 here
   const top3Total = answer.reduce((total, top3Gnome) => total + top3Gnome, 0);
