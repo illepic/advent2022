@@ -1,26 +1,34 @@
 import { logger } from "../../shared/logger";
 import { doGnomes, GnomeProcessor } from "./read-gnomes";
 
-const doLine: GnomeProcessor<number[]> = function () {
+const processGnome: GnomeProcessor<number[]> = function () {
   let currentGnomeTotal = 0;
   const top3Gnomes = [0, 0, 0];
 
   return {
     doLine(line) {
-      // Empty line means start of new gnome
-      if (line === "") {
-        // Is current gnome greater than all top 3 gnomes?
-        if (top3Gnomes.every((topGnome) => currentGnomeTotal > topGnome)) {
-          top3Gnomes[top3Gnomes.length - 1] = currentGnomeTotal;
-          top3Gnomes.sort((a, b) => b - a);
-        }
-
-        // Reset current gnome
-        currentGnomeTotal = 0;
+      if (line !== "") {
+        // Otherwise, keep adding onto gnome total
+        currentGnomeTotal = currentGnomeTotal + parseInt(line, 10);
         return;
       }
-      // Otherwise, keep adding onto gnome total
-      currentGnomeTotal = currentGnomeTotal + parseInt(line, 10);
+
+      // Empty line means start of new gnome
+
+      const firstSmallerIdx = top3Gnomes.findIndex(
+        (topGnome) => currentGnomeTotal > topGnome
+      );
+
+      // Our gnome is bigger than something in the top 3
+      if (firstSmallerIdx > -1) {
+        // Splice it into the position where it is the highest
+        top3Gnomes.splice(firstSmallerIdx, 0, currentGnomeTotal);
+        // Array is at 4, return to 3
+        top3Gnomes.pop();
+      }
+
+      // Reset current gnome
+      currentGnomeTotal = 0;
     },
     getResult() {
       return top3Gnomes;
@@ -29,10 +37,10 @@ const doLine: GnomeProcessor<number[]> = function () {
 };
 
 (async function doIt() {
-  const answer = await doGnomes(doLine);
+  const answer = await doGnomes(processGnome);
 
   // Sum of top 3 here
-  const top3Total = answer.reduce((acc, curr) => acc + curr, 0);
+  const top3Total = answer.reduce((total, top3Gnome) => total + top3Gnome, 0);
 
   logger(
     `****\nReading file line by line with readline done.\n****\nThe highest gnome number is ${top3Total}`
