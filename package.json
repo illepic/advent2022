@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "day1part1": "ts-node day-1/part-1",
-    "day1part2": "ts-node day-1/part-2",
-    "day2part1": "ts-node day-2/part-1",
-    "day2part2": "ts-node day-2/part-2",
-    "day3part1": "ts-node day-3/part-1"
+    "day1part1": "ts-node src/day-1/part-1",
+    "day1part2": "ts-node src/day-1/part-2",
+    "day2part1": "ts-node src/day-2/part-1",
+    "day2part2": "ts-node src/day-2/part-2",
+    "day3part1": "ts-node src/day-3/part-1",
+    "day3part2": "ts-node src/day-3/part-2"
   },
   "keywords": [],
   "author": "",

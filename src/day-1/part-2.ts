@@ -1,6 +1,6 @@
 import path from "path";
-import { logger } from "../../shared/logger";
-import { doLines, LineProcessor } from "../../shared/read-file";
+import { logger } from "../shared/logger";
+import { doLines, LineProcessor } from "../shared/read-file";
 
 const processGnome: LineProcessor<number[]> = function () {
   let currentGnomeTotal = 0;
