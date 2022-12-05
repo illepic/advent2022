@@ -19,8 +19,8 @@ const processRucksack: LineProcessor<number> = function () {
 
       const [first, second] = results;
 
-      // check range of first in second
-      if (first[0] >= second[0] && first[1] <= second[1]) {
+      // check overlap of first in second
+      if (first[0] <= second[1] && second[0] <= first[1]) {
         total = total + 1;
       }
     },
