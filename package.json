@@ -6,7 +6,8 @@
   "scripts": {
     "day1part1": "ts-node day-1/src/part-1",
     "day1part2": "ts-node day-1/src/part-2",
-    "day2part1": "ts-node day-2/src/part-1"
+    "day2part1": "ts-node day-2/src/part-1",
+    "day2part2": "ts-node day-2/src/part-2"
   },
   "keywords": [],
   "author": "",
