@@ -2,52 +2,64 @@ import path from "path";
 import { logger } from "../../shared/logger";
 import { doLines, LineProcessor } from "../../shared/read-file";
 
-type conditions = "win" | "lose" | "draw";
-type opponentPlay = "A" | "B" | "C";
-type youPlay = "X" | "Y" | "Z";
+enum Conditions {
+  Lose,
+  Draw,
+  Win,
+}
+enum OpponentShape {
+  Rock = "A",
+  Paper = "B",
+  Scissors = "C",
+}
+enum YouShape {
+  Rock = "X",
+  Paper = "Y",
+  Scissors = "Z",
+}
 
 type Lookup = {
-  [key in opponentPlay]: {
-    [key in youPlay]: conditions;
+  [key in OpponentShape]: {
+    [key in YouShape]: Conditions;
   };
 };
 
-const isOpponentPlay = (play: unknown): play is opponentPlay =>
-  ["A", "B", "C"].includes(play as string);
-const isYouPlay = (play: unknown): play is youPlay =>
-  ["X", "Y", "Z"].includes(play as string);
+const isOpponentPlay = (shape: unknown): shape is OpponentShape =>
+  Object.values(OpponentShape).includes(shape as OpponentShape);
+const isYouPlay = (shape: unknown): shape is YouShape =>
+  Object.values(YouShape).includes(shape as YouShape);
 
 const lookup: Lookup = {
   // Rock
-  A: {
-    X: "draw", // Rock
-    Y: "win", // Paper
-    Z: "lose", // Scissors
+  [OpponentShape.Rock]: {
+    [YouShape.Rock]: Conditions.Draw, // Rock
+    [YouShape.Paper]: Conditions.Win, // Paper
+    [YouShape.Scissors]: Conditions.Lose, // Scissors
   },
   // Paper
-  B: {
-    X: "lose", // Rock
-    Y: "draw", // Paper
-    Z: "win", // Scissors
+  [OpponentShape.Paper]: {
+    [YouShape.Rock]: Conditions.Lose, // Rock
+    [YouShape.Paper]: Conditions.Draw, // Paper
+    [YouShape.Scissors]: Conditions.Win, // Scissors
   },
   // Scissors
-  C: {
-    X: "win", // Rock
-    Y: "lose", // Paper
-    Z: "draw", // Scissors
+  [OpponentShape.Scissors]: {
+    [YouShape.Rock]: Conditions.Win, // Rock
+    [YouShape.Paper]: Conditions.Lose, // Paper
+    [YouShape.Scissors]: Conditions.Draw, // Scissors
   },
 };
 
-const shapeScoreLookup: { [key in youPlay]: number } = {
-  X: 1, // Rock
-  Y: 2, // Paper
-  Z: 3, // Scissors
+const shapeScoreLookup: { [key in YouShape]: number } = {
+  [YouShape.Rock]: 1, // Rock
+  [YouShape.Paper]: 2, // Paper
+  [YouShape.Scissors]: 3, // Scissors
 };
 
-const successScoreLookup: { [key in conditions]: number } = {
-  lose: 0,
-  draw: 3,
-  win: 6,
+const successScoreLookup: { [key in Conditions]: number } = {
+  [Conditions.Lose]: 0,
+  [Conditions.Draw]: 3,
+  [Conditions.Win]: 6,
 };
 
 const processPuzzle: LineProcessor<number> = function () {
