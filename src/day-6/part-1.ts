@@ -4,9 +4,7 @@ import uniq from "lodash/uniq";
 
 import { logger } from "../shared/logger";
 
-const noRepeats = (word: string) => {
-  return uniq(word.split("")).length === word.length;
-};
+const noRepeats = (word: string) => uniq(word.split("")).length === word.length;
 
 (async function doIt() {
   const readable = fs.createReadStream(
@@ -18,6 +16,7 @@ const noRepeats = (word: string) => {
     console.error(error);
   });
 
+  let distinctChunk = 4;
   let counter = 0;
   let marker = "";
 
@@ -32,11 +31,12 @@ const noRepeats = (word: string) => {
 
       marker = marker + chunk;
 
-      if (marker.length > 4) {
+      // Remove first char if over count
+      if (marker.length > distinctChunk) {
         marker = marker.substring(1);
       }
 
-      if (marker.length === 4 && noRepeats(marker)) {
+      if (marker.length === distinctChunk && noRepeats(marker)) {
         logger(
           `****\nReading file line by line with readline done.\n****\nThe score is ${counter}`
         );
