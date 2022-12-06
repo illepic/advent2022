@@ -8,42 +8,39 @@ type CratesStack = {
 };
 
 const processRucksack: LineProcessor<CratesStack> = function () {
-  // let final = "";
   const start: string[][] = [];
-  let startFinished = false;
   const crates: { [key in number]: string[] } = {};
 
   return {
     doLine(line) {
       // Parse beginning of crates to determine starting situation
-
-      if (!line.startsWith("move")) {
+      if (line && !line.startsWith("move")) {
         // We are in starting stack
         const cratesRow = line.match(/.{1,4}/g)?.map((col) => col.trim());
-        // console.log(cratesRow);
         cratesRow && start.push(cratesRow);
         return;
       }
-      if (!startFinished) {
-        // Now we can use starting crates
+      // empty line indicates start move coming up next
+      if (!line) {
+        // Now we can use starting crates, bottom up to bottom first
         start.reverse();
+        // Last row is numbers
         const numArray = start.shift();
-        numArray &&
-          numArray.forEach((stackNum) => {
-            const stackKey = parseInt(stackNum, 10);
-            crates[stackKey] = [];
+        if (!numArray) throw Error("No num array row");
 
-            start.forEach((crateRow) => {
-              // stackKey starts at one, must -1 to 0 index
-              const oneIndexed = stackKey - 1;
-              if (!!crateRow[oneIndexed]) {
-                crates[stackKey].push(crateRow[oneIndexed]);
-              }
-            });
+        numArray.forEach((stackNum) => {
+          const stackKey = parseInt(stackNum, 10);
+          crates[stackKey] = [];
+
+          start.forEach((crateRow) => {
+            // stackKey starts at one, must -1 to 0 index
+            const crateRowItem = crateRow[stackKey - 1];
+            if (crateRowItem) {
+              crates[stackKey].push(crateRowItem);
+            }
           });
-        // console.log(crates);
+        });
 
-        startFinished = true;
         return;
       }
       // Now process all move commands
@@ -52,7 +49,10 @@ const processRucksack: LineProcessor<CratesStack> = function () {
       const fromStack = parseInt(commands[3], 10);
       const toStack = parseInt(commands[5], 10);
 
-      const cratesToMove = crates[fromStack].splice(-numCrates).reverse();
+      const cratesToMove = crates[fromStack]
+        .splice(-numCrates, numCrates)
+        .reverse();
+
       crates[toStack].push(...cratesToMove);
     },
     getResult() {
@@ -67,14 +67,8 @@ const processRucksack: LineProcessor<CratesStack> = function () {
     path.join(__dirname, "crates.txt")
   );
 
-  // final stuff
-  console.log(crates);
-
   const answer = Object.values(crates)
-    .map((stack) => {
-      const last = stack.pop()?.replace("[", "").replace("]", "");
-      return last;
-    })
+    .map((stack) => stack.pop()?.replace("[", "").replace("]", ""))
     .join("");
 
   logger(
