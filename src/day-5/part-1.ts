@@ -1,4 +1,3 @@
-import { last } from "lodash";
 import path from "path";
 import { logger } from "../shared/logger";
 import { doLines, LineProcessor } from "../shared/read-file";
